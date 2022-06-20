@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Portrait_Frag">
+
+    <Button
+        android:id="@+id/vid_demo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vid_demo"
+        android:textAlignment="center"
+        android:translationX="50dp"
+        android:translationY="100dp" />
+
+    <TextView
+        android:id="@+id/vid_demo_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vid_demo_desc"
+        android:translationX="50dp"
+        android:translationY="100dp" />
+
+    <Button
+        android:id="@+id/bot_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bot_connect"
+        android:translationX="50dp"
+        android:translationY="200dp" />
+
+    <!-- ToDo: this text should fit in portrait view -->
+    <TextView
+        android:id="@+id/bot_connect_desc"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/bot_connect_desc"
+        android:translationX="50dp"
+        android:translationY="200dp" />
+
+</LinearLayout>
