@@ -33,7 +33,7 @@
 
     <TextView
         android:id="@+id/bot_connect_desc"
-        android:layout_width="match_parent"
+        android:layout_width="201dp"
         android:layout_height="wrap_content"
         android:text="@string/bot_connect_desc"
         android:translationX="50dp"

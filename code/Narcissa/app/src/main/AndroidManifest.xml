@@ -3,7 +3,8 @@
     package="com.example.narcissa">
 
     <uses-permission android:name="android.permission.CAMERA" />
-<!--    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- Only need the main back camera, at least for now. -->
     <!-- TODO: access front camera for bot_connect -->
     <uses-feature
@@ -21,9 +22,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Narcissa">
         <activity
-            android:name=".VideoDemonstrations"
-            android:parentActivityName=".MainActivity"
+            android:name=".BotConnector"
             android:exported="false" />
+        <activity
+            android:name=".VideoDemonstrations"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -31,7 +31,6 @@
         android:translationX="50dp"
         android:translationY="200dp" />
 
-    <!-- ToDo: this text should fit in portrait view -->
     <TextView
         android:id="@+id/bot_connect_desc"
         android:layout_width="250dp"

@@ -4,10 +4,10 @@
     <!--    Button label strings -->
     <string name="vid_demo">Video demonstration</string>
     <string name="bot_connect">Connect to bot</string>
+    <string name="select_video">Select Video</string>
 
     <!--    Explanation paragraphs? -->
     <string name="vid_demo_desc">Locate mirrors in a selected video.</string>
     <string name="bot_connect_desc">Connect to an Arduino robot. Used for live demonstrations.</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

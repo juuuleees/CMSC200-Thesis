@@ -3,3 +3,13 @@ Added:
 = landscape and portrait fragments
 In progress:
 = video demonstrations
+
+7/1/2022
+Have to redo the files, OpenCV wouldn't initialize and I didn't catch it early enough.
+Luckily there's not that much to rebuild.
+1952H: Brought code back to original state.
+
+7/4/2022
+Setback, VideoWriter doesn't work (supposedly) on Android just yet, will link the
+StackOverflow thread about it later. Will have to read bytes into buffer into image
+and repeat per frame.

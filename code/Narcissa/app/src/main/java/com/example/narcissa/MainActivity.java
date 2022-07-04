@@ -4,15 +4,20 @@
 // Specialized thesis token: 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
 // Expires 7/20/2022
 
+//  NOTE: "OpenCV error: Cannot load info library for OpenCV"
+//        is only applicable to special Android configs like builds with CUDA support
 package com.example.narcissa;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +25,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Configuration config = getResources().getConfiguration();
+        if (!OpenCVLoader.initDebug()) {
+            Log.i("OpenCV", "Couldn't initialize OpenCV.");
+        } else {
+            Log.i("OpenCV", "OpenCv initialized.");
+        }
 
 //        Adjust to device orientation
 //        NOTE: use getSupportFragmentManager() for androidx.fragment

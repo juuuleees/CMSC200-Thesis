@@ -9,3 +9,5 @@ dependencyResolutionManagement {
 rootProject.name = "Narcissa"
 include ':app'
 
+include ':openCV343'
+include ':openCV343'
