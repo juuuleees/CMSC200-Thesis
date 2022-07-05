@@ -1,7 +1,7 @@
 // Github token: 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
 // Expires 8/19/2022
 
-// Specialized thesis token: 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
+// Specialized thesis token: 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
 // Expires 7/20/2022
 
 //  NOTE: "OpenCV error: Cannot load info library for OpenCV"

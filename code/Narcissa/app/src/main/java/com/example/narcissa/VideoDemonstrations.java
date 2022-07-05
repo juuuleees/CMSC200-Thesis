@@ -1,13 +1,20 @@
 package com.example.narcissa;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,6 +24,7 @@ public class VideoDemonstrations extends AppCompatActivity {
 
     private Button select_video;
     private MediaMetadataRetriever data_retriever;
+    private Uri video_uri;
     private final int SELECT_VIDEO_REQUEST = 100;
 
     @Override
@@ -27,29 +35,33 @@ public class VideoDemonstrations extends AppCompatActivity {
 //      Select a video from gallery
         Intent vid_intent = set_retrieval_intent();
 
-//      Initialize video selection button
+        ActivityResultLauncher<Intent> launch_video_demo = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Log.i("what", "di ko gets nangyayari but anyway result: " + result.toString());
+                            data_retriever = new MediaMetadataRetriever();
+//                          Have to call getData() twice to get to the actual content, otherwise proceed as usual
+                            video_uri = result.getData().getData();
+                            data_retriever.setDataSource(getApplicationContext(), video_uri);
+                            VideoMirrorDetection mirror_detector = new VideoMirrorDetection(data_retriever, video_uri);
+                            mirror_detector.add_fov();
+                        }
+                    }
+                }
+        );
+
+        //      Initialize video selection button
         select_video = (Button)findViewById(R.id.select_video_button);
         select_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(Intent.createChooser(vid_intent, "Select Video")
-                        ,SELECT_VIDEO_REQUEST);
+                launch_video_demo.launch(vid_intent);
             }
         });
 
-
-    }
-
-    public void onActivityResult(int request, int result, Intent data) {
-        if (result == RESULT_OK) {
-            if (request == SELECT_VIDEO_REQUEST) {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                Uri video_uri = data.getData();
-                retriever.setDataSource(getApplicationContext(), video_uri);
-                VideoMirrorDetection mirror_detector = new VideoMirrorDetection(retriever, video_uri);
-                mirror_detector.add_fov();
-            }
-        }
     }
 
     public Intent set_retrieval_intent() {
