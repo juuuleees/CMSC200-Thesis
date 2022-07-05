@@ -6,4 +6,31 @@
     android:layout_height="match_parent"
     tools:context=".BotConnector">
 
+    <Button
+        android:id="@+id/connect_arduino_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="122dp"
+        android:layout_marginTop="156dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginBottom="527dp"
+        android:text="@string/bot_connect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="66dp"
+        android:layout_marginEnd="177dp"
+        android:layout_marginBottom="442dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connect_arduino_btn" />
 </androidx.constraintlayout.widget.ConstraintLayout>
