@@ -1,0 +1,5 @@
+15/7/2022
+- code won't convert video to grayscale, possibly issues with filepath
+- error: (-215:Assertion failed) frameSize.width > 0 && frameSize.height > 0 in function 'open'
+	= means that for some reason it doesn't read a frame/image, yet it
+		produces the necessary output
