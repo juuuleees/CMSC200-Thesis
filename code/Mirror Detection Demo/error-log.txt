@@ -3,3 +3,15 @@
 - error: (-215:Assertion failed) frameSize.width > 0 && frameSize.height > 0 in function 'open'
 	= means that for some reason it doesn't read a frame/image, yet it
 		produces the necessary output
+
+16/7/2022
+- resolved grayscale conversion issue with VideoFileclip from moviepy, code refactored for
+	further moviepy usage
+	1805H
+		- MoviePy error: failed to read the duration of file output_videos/fov_video.mp4.
+			This has to be handled even though it produces the file we need. Not the 
+			greatest priority but it has to be solved before/during file selection implementation
+			Oddly it only occurs when assigning a new VideoFileClip to self.fov_video.
+			
+			Solution: remove that variable. It writes the video we need, anyway. But put a pin
+			in this error, I get the feeling it'll come back.
