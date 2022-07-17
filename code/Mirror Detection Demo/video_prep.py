@@ -12,14 +12,18 @@ class VideoPrep:
 
 	def __init__(self, video_clip):
 		self.input_video = video_clip.copy()
+
+		# data for Shi-Tomasi feature detector
 		self.feature_count = 25
 		self.min_euclidean_distance = 10
 		self.threshold = 0.2
 
-	# TODO: File selection functions, things are going to be working differently once 
+	#  TODO: File selection functions, things are going to be working differently once 
 	# 		the user can pick which video to process
+	#  TODO: Utilize moviepy methods
 
 	#  TODO: return the file na lang? Para one time big time yung video preparation
+	#  TODO: Locate and isolate clips that have the main reference point
 
 	def convertToGray(self):
 		print("Converting to grayscale...")
@@ -69,8 +73,9 @@ class VideoPrep:
 	def markFeatures(self):
 		# Locate features using Shi-Tomasi
 		# TODO: Implement Shi-Tomasi in Java
+		# considering that I need to check frames for the main reference point 
+		# it might be better to save this as an array of images
 
-		# TODO: check on Klara
 		print("Marking features...")
 		fov_reader = cv2.VideoCapture("output_videos/bw_video.mp4")
 		print(self.bw_video.filename)
@@ -131,7 +136,3 @@ class VideoPrep:
 		print("Features marked.")
 		feature_out.release()
 		fov_reader.release()
-
-
-
-# Detect features
