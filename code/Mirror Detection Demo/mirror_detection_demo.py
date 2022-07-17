@@ -9,6 +9,7 @@
 
 import cv2
 import numpy as np
+import faulthandler
 
 from moviepy.editor import *
 from video_prep import VideoPrep
@@ -19,5 +20,7 @@ input_video = VideoFileClip("sample_videos/egomotion-smp1.mp4")
 video_prep = VideoPrep(input_video)
 
 video_prep.convertToGray()
-video_prep.addFoV()
-# video_prep.markFeatures()
+# video_prep.addFoV()
+
+faulthandler.enable()
+video_prep.markFeatures()

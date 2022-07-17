@@ -15,3 +15,12 @@
 			
 			Solution: remove that variable. It writes the video we need, anyway. But put a pin
 			in this error, I get the feeling it'll come back.
+	1828H:
+		- fov_video.mp4 isn't being written properly somehow. It's playable and everything but
+			you can't get its duration which is messing with the rest of the code. 
+17/7/2022
+0023H:
+	- video is now being written correctly. Relief.
+2048H:
+	- markFeatures() causes a segfault and doesn't write to video properly. However locating features
+		works fine and results are visible using cv2.imshow()
