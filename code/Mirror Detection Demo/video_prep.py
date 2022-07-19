@@ -39,7 +39,8 @@ class VideoPrep:
 		height = self.bw_video.h
 
 		video_capture = cv2.VideoCapture(self.bw_video.filename)
-		fov_vid = cv2.VideoWriter("output_videos/fov_video.mp4",
+		fov_vid = cv2.VideoWriter(
+							"output_videos/fov_video.mp4",
 							cv2.VideoWriter_fourcc(*'mp4v'),
 							30,
 							(int(width), int(height)))
@@ -88,10 +89,6 @@ class VideoPrep:
 						cv2.VideoWriter_fourcc(*'mpg2'),
 						30,
 						(int(width), int(height)))
-		# print("strap in it's " + str(fov_reader.get(cv2.CAP_PROP_FRAME_COUNT)) + " frames")
-		# print("width in VideoCapture:")
-		# print(fov_reader.get(3))
-		# print(int(fov_reader.get(3)))
 		
 		i = 1
 		while fov_reader.isOpened():
@@ -105,7 +102,7 @@ class VideoPrep:
 								curr_frame, 
 								self.feature_count,
 								self.threshold,
-								self.min_euclidean_distance)
+								self.min_euclidean_distance)				
 				features = np.int0(features)
 				# print("hold on a sec")
 
@@ -121,7 +118,7 @@ class VideoPrep:
 						255,
 						-1)
 					j += 1
-				# feature_out.write(curr_frame)
+				feature_out.write(curr_frame)
 				cv2.imshow("features", curr_frame)
 				if (cv2.waitKey(1) == 27):
 					break

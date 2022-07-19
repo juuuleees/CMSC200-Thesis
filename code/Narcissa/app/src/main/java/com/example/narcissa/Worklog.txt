@@ -15,3 +15,16 @@ StackOverflow thread about it later. Will have to read bytes into buffer into im
 and repeat per frame.
 
 Errors: VideoDemonstrations.java, can't open VideoWriter
+
+7/5/2022
+USB connection between Android and Arduino functional.
+
+Errors: UI can't switch from BotConnect and VideoDemonstrations, changes after
+        choosing one or the other
+
+7/5/2022
+Connected Android to Arduino Uno (Iduino Uno) via USB
+
+7/19/2022
+Removing VideoDemonstrations and connected classes. Those will be moved to a Python
+program instead.
