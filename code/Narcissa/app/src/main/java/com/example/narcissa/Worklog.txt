@@ -27,4 +27,5 @@ Connected Android to Arduino Uno (Iduino Uno) via USB
 
 7/19/2022
 Removing VideoDemonstrations and connected classes. Those will be moved to a Python
-program instead.
+program instead. Also fixed phone orientation to landscape. It's harder to balance a
+phone using portrait view.
