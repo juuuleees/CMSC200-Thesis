@@ -19,8 +19,8 @@ input_video = VideoFileClip("sample_videos/egomotion-smp1.mp4")
 
 video_prep = VideoPrep(input_video)
 
-video_prep.convertToGray()
-# video_prep.addFoV()
+# video_prep.convertToGray()
 
-faulthandler.enable()
+# faulthandler.enable()
 video_prep.markFeatures()
+video_prep.addFoV()

@@ -24,3 +24,7 @@
 2048H:
 	- markFeatures() causes a segfault and doesn't write to video properly. However locating features
 		works fine and results are visible using cv2.imshow()
+
+24/7/2022
+0148H:
+	- used different method for markFeatures(), everything is now working swimmingly
