@@ -16,22 +16,13 @@ class VideoPrep:
 
 		# data for Shi-Tomasi feature detector
 		self.feature_count = 100
-		self.min_euclidean_distance = 10
-		self.threshold = 0.2
+		self.min_euclidean_distance = 5
+		self.threshold = 0.05
 
 	#  TODO: File selection functions, things are going to be working differently once 
 	# 		the user can pick which video to process
 	
 	#  TODO: Locate and isolate clips that have the main reference point
-
-	def convertToGray(self):
-		print("Converting to grayscale...")
-
-		bw_version = self.input_video.fx(vfx.blackwhite)
-		bw_version.write_videofile("output_videos/bw_video.mp4")		
-		self.bw_video = VideoFileClip("output_videos/bw_video.mp4")
-
-		bw_version.close()
 
 	def markFeatures(self):
 		# Locate features using Shi-Tomasi
@@ -52,6 +43,12 @@ class VideoPrep:
 				# convert the frame to grayscale because Shi-Tomasi needs grayscale
 				curr_frame = cv2.cvtColor(curr_frame, cv2.COLOR_RGB2GRAY)
 				
+				# Sharpen the frame
+				sharpen_kernel = np.array([[0, -1, 0],
+								  [-1, 5, -1],
+								  [0, -1, 0]])
+				mrp_sharp = cv2.filter2D(curr_frame, -1, sharpen_kernel)
+
 				features = cv2.goodFeaturesToTrack(
 								curr_frame, 
 								self.feature_count,
