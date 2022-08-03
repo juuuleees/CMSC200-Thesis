@@ -1,20 +1,36 @@
 import cv2
 import numpy as np
+import array as arr
+import math
 
 class MRP:
 	
 	def __init__(self, mrp_image):
 		self.src_img = mrp_image
+		self.lens_areas = []
+		self.distances = []
+
+	# getters
+	def getSrcImage(self):
+		return self.src_img
+	def getLensAreas(self):
+		return self.lens_areas
+	def getDistances(self):
+		return self.distances
+
+	# setters
+	def setSrcImage(self, new_src):
+		self.src_img = new_src
+	def setLensAreas(self, new_lens):
+		self.lens_araes = new_lens
+	def setDistances(self, new_dists):
+		self.distances = new_dists
 
 	# TODO: Save the camera lens and flashlight as features
-	# 		How far apart they are + the shape + placement
+	# 		How far apart they are + area
 
-	# TODO: If the algorithms are still having trouble locating the area
-	# 		I want, I'm painting a line around the region I want.
-
-	# TODO: ask Sir Jimmy if it's alright that the methods are fitted
-	# 		to the equipment I'm currently using. I'm probably overthinking it
-	# 		but I think it'll be alright as long as it's stated in the paper.
+	def findLensArea(self, radius):
+		return np.pi * (radius * radius)
 
 
 	# Source of interest: https://towardsdatascience.com/extracting-regions-of-interest-from-images-dacfd05a41ba
@@ -38,48 +54,42 @@ class MRP:
 
 		cv2.imwrite("mrp.jpg", mrp_canny)
 
-		# Let's go open-close!!
-		# mrp_open = cv2.morphologyEx(mrp_canny, cv2.MORPH_OPEN, morph_kernel)
-
-
-		# Hough circle detection to pick out the camera lens and hopefully the flashlight too
-
-		# TODO: figure out why this is giving me more and bigger circles than intended
+		# Hough circle detection to pick out the camera lens 
 		camera_lens = cv2.HoughCircles(mrp_canny, cv2.HOUGH_GRADIENT, 1, 100, param1=50, param2=30, minRadius=10, maxRadius=100)
 		camera_lens = np.round(camera_lens[0, :]).astype("int")
 
-		print(camera_lens)
+		# find the area of the camera lens circles
+		# self.lens_areas = []
+		for (x,y,r) in camera_lens:
+			lens = self.findLensArea(r)
+			self.lens_areas.append(lens)
 
+		# print(camera_lens)
+		# print("Lens areas: ")
+		# print(self.lens_areas)
+
+		# Note the distance between the centers of the lens
+		# self.distances = []
+		length = len(camera_lens) - 1
+		i = 0
+		while (i <= 0):
+			lens1 = camera_lens[i]
+			lens2 = camera_lens[i+1]
+
+			p = [lens1[0], lens1[1]]
+			q = [lens2[0], lens2[1]]
+
+			dist = math.dist(p,q)
+			self.distances.append(dist)
+			i += 1
+
+		# Mark the lens
 		mrp_canny = cv2.cvtColor(mrp_canny, cv2.COLOR_GRAY2RGB)
 		for (x,y,r) in camera_lens:
 			cv2.circle(mrp_canny,
 					   (x,y),
 					   r,
 					   (0,255,0),
-					   3)	
-
-		# feature_count = 100
-		# threshold = 0.05					 # low threshold so I can get more features out of the image
-		# min_euclidean_distance = 5
-
-		# features = cv2.goodFeaturesToTrack(
-		# 				mrp_sharp,
-		# 				feature_count,
-		# 				threshold,
-		# 				min_euclidean_distance)
-		# features = np.int0(features)
-
-		# # i = 1
-		# for feature in features:
-		# 	x,y = feature.ravel()
-		# 	cv2.circle(
-		# 			mrp_sharp,
-		# 			(x,y),
-		# 			3,
-		# 			255,
-		# 			-1)
-
-		# find the area with the most features, like the most feature dense area on the image
-
+					   -1)	
 
 		cv2.imwrite("mrp.jpg", mrp_canny)

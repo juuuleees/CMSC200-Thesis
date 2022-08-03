@@ -40,3 +40,8 @@
 3-8-2022
 	- located two proper circles. It'll be enough for now as the bare minimum but I will continue 
 	  to try and get the final third circle.
+	- the process for locating camera lens, predictably, works better the clearer the photo is. A different
+	  sample photo taken in front of the older mirror in mom's room with different lighting doesn't register
+	  the same way as the original MRP reference photo. This should be noted as a limitation or at the very
+	  least an obstacle
+	
