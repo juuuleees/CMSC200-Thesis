@@ -28,3 +28,15 @@
 24/7/2022
 0148H:
 	- used different method for markFeatures(), everything is now working swimmingly
+
+25/7/2022
+0122H:
+	- sharpened and tweaked Shi-Tomasi threshold to get more features out of the MRP source
+	  image
+	- located the camera lens and flashlight in the MRP source image with just Shi-Tomasi
+	  but not in the sample video. It's probably due to lighting, but I should find a way
+	  to handle it
+
+3-8-2022
+	- located two proper circles. It'll be enough for now as the bare minimum but I will continue 
+	  to try and get the final third circle.

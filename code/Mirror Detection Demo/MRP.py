@@ -18,11 +18,14 @@ class MRP:
 
 
 	# Source of interest: https://towardsdatascience.com/extracting-regions-of-interest-from-images-dacfd05a41ba
+	# Source of interest: https://github.com/Jiankai-Sun/Android-Camera2-API-Example/blob/master/app/src/main/java/com/jack/mainactivity/MainActivity.java
 	def findCameraArea(self):
 
+		# kernels that we'll use
 		sharpen_kernel = np.array([[0, -1, 0],
 								  [-1, 5, -1],
 								  [0, -1, 0]])
+		morph_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
 
 		mrp_gray = cv2.cvtColor(self.src_img, cv2.COLOR_RGB2GRAY)
 		cv2.imwrite("mrp_gray.jpg", mrp_gray)
@@ -33,10 +36,16 @@ class MRP:
 		mrp_gauss = cv2.GaussianBlur(mrp_sharp, (5,5), 1.4)
 		mrp_canny = cv2.Canny(mrp_gray, 50, 200)
 
+		cv2.imwrite("mrp.jpg", mrp_canny)
+
+		# Let's go open-close!!
+		# mrp_open = cv2.morphologyEx(mrp_canny, cv2.MORPH_OPEN, morph_kernel)
+
+
 		# Hough circle detection to pick out the camera lens and hopefully the flashlight too
 
 		# TODO: figure out why this is giving me more and bigger circles than intended
-		camera_lens = cv2.HoughCircles(mrp_canny, cv2.HOUGH_GRADIENT, 1.1, 100)
+		camera_lens = cv2.HoughCircles(mrp_canny, cv2.HOUGH_GRADIENT, 1, 100, param1=50, param2=30, minRadius=10, maxRadius=100)
 		camera_lens = np.round(camera_lens[0, :]).astype("int")
 
 		print(camera_lens)
@@ -47,8 +56,7 @@ class MRP:
 					   (x,y),
 					   r,
 					   (0,255,0),
-					   3)
-
+					   3)	
 
 		# feature_count = 100
 		# threshold = 0.05					 # low threshold so I can get more features out of the image
@@ -75,10 +83,3 @@ class MRP:
 
 
 		cv2.imwrite("mrp.jpg", mrp_canny)
-		# imshow in cv2 is currently producing segfaults, but otherwise the code works
-		# it's supposedly an issue in the latest release so I'd need to downgrade my Python
-		# but it works and I just need it to see my image anyway
-
-		# cv2.imshow('mrp features', mrp_gray)
-		# cv2.waitKey(0)
-		# cv2.destroyAllWindows()
