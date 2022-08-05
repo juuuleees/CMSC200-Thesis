@@ -44,4 +44,8 @@
 	  sample photo taken in front of the older mirror in mom's room with different lighting doesn't register
 	  the same way as the original MRP reference photo. This should be noted as a limitation or at the very
 	  least an obstacle
+
+5-8-2022
+	- finally isolated the MRP. Had to hardcode it though, and it'll probably have to be hardcoded to match
+	  the Android being used. Reminding myself again to mark this in the methodology.
 	
