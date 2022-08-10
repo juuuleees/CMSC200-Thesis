@@ -15,15 +15,16 @@ from video_prep import VideoPrep
 from MRP import MRP
 
 # Read input video as VideoFileClip 
-input_video = VideoFileClip("sample_videos/egomotion-smp1.mp4")
+input_video = VideoFileClip("sample_videos/smp3.mp4")
 	
 mrp_src = cv2.imread("MRP.jpg")
 main_ref_pt = MRP(mrp_src)
 main_ref_pt.findMRPArea()
+main_ref_pt.saveFeatures()
 
 video_prep = VideoPrep(input_video)
 
-video_prep.locateMRP(main_ref_pt)
+video_prep.isolateMRPFrames(main_ref_pt)
 # video_prep.markFeatures()
 # video_prep.addFoV()
 

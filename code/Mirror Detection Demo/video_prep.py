@@ -2,6 +2,7 @@ import cv2
 import os
 import copy
 import glob
+import math
 import numpy as np
 import faulthandler
 
@@ -29,7 +30,69 @@ class VideoPrep:
 	# 	Split those frames off from the rest of the video
 	# 	THEN MARK THE FEATURES
 
-	def locateMRP(self, mrp):
+	def findMRPInFrame(self, mrp, frame):
+
+		# Prep the frame
+		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		sharpen = cv2.filter2D(gray, -1, mrp.sharpen_kernel)
+		canny = cv2.Canny(sharpen, 50, 200)
+
+		# See if there are any lens
+		# TODO: Make this rotation invariant
+		# TODO: this has to take the size of the lens into account
+		found_lens = cv2.HoughCircles(canny, cv2.HOUGH_GRADIENT,
+							1, 100, param1 = 50, param2 = 30, 
+							minRadius = 5, maxRadius = 20)
+		if found_lens is not None:
+			found_lens = np.round(found_lens[0, :]).astype("int")
+		else:
+			# print("no circles, no lens")
+			mrp_present = False
+			return mrp_present
+
+
+		# Check the distances if the any circles aka possible lenses
+		# were detected in the frame, else return false
+		# TODO: Set a threshold for distance comparison
+		mrp_distances = mrp.getDistances()
+		length = len(found_lens)
+		i = 0
+		print(found_lens)
+		print("found_lens length: ", length, " landed!")
+		if (length != 0) & (length > 1):
+			for (x,y,r) in found_lens:
+				cv2.circle(gray,
+					   (x,y),
+					   r,
+					   (0,255,0),
+					   -1)
+			while (i < length):
+				if (i < (length - 1)):
+					# TODO: paper code this first, it's getting unwieldy
+					print("now we here")
+					lens1 = found_lens[i]
+					lens2 = found_lens[i+1]
+	
+					p = [lens1[0], lens1[1]]
+					q = [lens2[0], lens2[1]]
+	
+					dist = math.dist(p,q)
+	
+					# TODO: efficiently find the closest match to a distance in the MRP object
+					cv2.imwrite("curr_frame.jpg", gray)
+				i += 1
+			mrp_present = True	
+
+		else:
+			mrp_present = False
+
+		return mrp_present
+
+
+	def isolateMRPFrames(self, mrp):
+
+		mrp_frames = []
+
 		# Get the frames
 		mrp_locator = cv2.VideoCapture(self.input_video.filename)
 
@@ -38,14 +101,22 @@ class VideoPrep:
 		else:
 		
 			# Iterate through the frames looking for the MRP
-			
+			print("ok here we go")
 			i = 1
 			while (mrp_locator.isOpened()):
 				ret, curr_frame = mrp_locator.read()
 
 				if ret == True:
 					
+					if (self.findMRPInFrame(mrp, curr_frame) == True):
+						print("an MRP!!")
+						break
+					# else:
+						# print("no MRP!!")
+						# break
 					i += 1
+
+					print(i)
 					
 			# 		cv2.imshow("mrp_locator", curr_frame)
 					
@@ -54,7 +125,7 @@ class VideoPrep:
 				else:
 					break
 
-			# mrp_locator.release()
+			mrp_locator.release()
 			# cv2.destroyAllWindows()
 		
 

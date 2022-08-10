@@ -11,6 +11,10 @@ class MRP:
 		self.lens_areas = []
 		# 'distances' is distances between the centers of the lens
 		self.distances = []
+		MRP.edge_features = []
+		MRP.sharpen_kernel = np.array([[0, -1, 0],
+								  [-1, 5, -1],
+								  [0, -1, 0]])
 
 	# getters
 	def getSrcImage(self):
@@ -19,6 +23,11 @@ class MRP:
 		return self.lens_areas
 	def getDistances(self):
 		return self.distances
+	def getEdgeFeatures(self):
+		return MRP.edge_features
+	def getSharpenKernel(self):
+		return MRP.sharpen_kernel
+
 
 	# setters
 	def setSrcImage(self, new_src):
@@ -27,10 +36,13 @@ class MRP:
 		self.lens_araes = new_lens
 	def setDistances(self, new_dists):
 		self.distances = new_dists
+	def setEdgeFeatures(self, new_edges):
+		MRP.edge_features = new_edges
+	def setSharpenKernel(self, sharpen):
+		MRP.sharpen_kernel = sharpen
 
-	# TODO: Save the camera lens and flashlight as features
-	# 		How far apart they are + area
 
+	# MRP functions
 	def findLensArea(self, radius):
 		return np.pi * (radius * radius)
 
@@ -53,28 +65,20 @@ class MRP:
 		# Crop out the rectangle and save it as the MRP
 		cropped_MRP = self.src_img[y1:y2, x2:x1]
 
-		self.final_MRP = cropped_MRP
-		
+		MRP.final_template = cropped_MRP
+		cv2.imwrite("final_template.jpg", cropped_MRP)
 
-
-	# Source of interest: https://towardsdatascience.com/extracting-regions-of-interest-from-images-dacfd05a41ba
 	# Source of interest: https://github.com/Jiankai-Sun/Android-Camera2-API-Example/blob/master/app/src/main/java/com/jack/mainactivity/MainActivity.java
 	def findMRPArea(self):
 
-		# kernels that we'll use
-		sharpen_kernel = np.array([[0, -1, 0],
-								  [-1, 5, -1],
-								  [0, -1, 0]])
-		morph_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
-
+		# TODO: Make lines 75 - 86 a callable function, decrease runtime
 		mrp_gray = cv2.cvtColor(self.src_img, cv2.COLOR_RGB2GRAY)
-		cv2.imwrite("mrp_gray.jpg", mrp_gray)
 
-		mrp_sharp = cv2.filter2D(mrp_gray, -1, sharpen_kernel)
+		mrp_sharp = cv2.filter2D(mrp_gray, -1, MRP.sharpen_kernel)
 
-		# Implement Gaussian blur + Canny edge detection
-		mrp_gauss = cv2.GaussianBlur(mrp_sharp, (5,5), 1.4)
-		mrp_canny = cv2.Canny(mrp_gray, 50, 200)
+		# Implement Canny edge detection
+		# TODO: See if Gaussian blur is required before implementing Canny edge
+		mrp_canny = cv2.Canny(mrp_sharp, 50, 200)
 
 		# Hough circle detection to pick out the camera lens 
 		camera_lens = cv2.HoughCircles(mrp_canny, cv2.HOUGH_GRADIENT, 
@@ -89,9 +93,6 @@ class MRP:
 			centers.append([x,y])
 			lens = self.findLensArea(r)
 			self.lens_areas.append(lens)
-
-		# print("centers: ")
-		# print(centers)
 
 		# Note the distance between the centers of the lens
 		length = len(camera_lens) - 1
@@ -110,32 +111,56 @@ class MRP:
 
 		self.findCameraArea(centers)
 
-		# depende sa magiging kinalabasan ng ROI we might not need this
-		# Mark the lens
-
 		# Commenting this out but not deleting in case I need it again in the future
-		# mrp_canny = cv2.cvtColor(mrp_canny, cv2.COLOR_GRAY2RGB)
-		# for (x,y,r) in camera_lens:
-		# 	cv2.circle(mrp_canny,
-		# 			   (x,y),
-		# 			   r,
-		# 			   (0,255,0),
-		# 			   -1)
-		# 	# print("center: ",x,y)
-		# 	if (x == 900):
-		# 		cv2.circle(mrp_canny,
-		# 			   (x,y),
-		# 			   5,
-		# 			   (0,0,255),
-		# 			   1)
-		# 	else:
-		# 		cv2.circle(mrp_canny,
-		# 			   (x,y),
-		# 			   5,
-		# 			   (255,0,0),
-		# 			   1)
+		# Mark the circles
+		mrp_canny = cv2.cvtColor(mrp_canny, cv2.COLOR_GRAY2RGB)
+		for (x,y,r) in camera_lens:
+			cv2.circle(mrp_canny,
+					   (x,y),
+					   r,
+					   (0,255,0),
+					   -1)
+			# print("center: ",x,y)
+			if (x == 900):
+				cv2.circle(mrp_canny,
+					   (x,y),
+					   5,
+					   (0,0,255),
+					   1)
+			else:
+				cv2.circle(mrp_canny,
+					   (x,y),
+					   5,
+					   (255,0,0),
+					   1)
+		cv2.imwrite("mrp.jpg", mrp_canny)
 
-		# cv2.imwrite("mrp.jpg", mrp_canny)
-		# cv2.imshow("mrp", mrp_canny)
-		# cv2.waitKey(5000)
-		# cv2.destroyAllWindows()
+# Everything from here on concerns the final MRP template
+# TODO: Note in the methodology that the mirror has an effect on the MRP image. 
+#		If the mirror's dirty or cloudy, it'll of course result in a not-so great quality image
+# 		that no amount of sharpening (at least on a basic level) is going to make any better
+	def saveFeatures(self):
+		# print(MRP.edge_features)
+
+		gray = cv2.cvtColor(MRP.final_template, cv2.COLOR_RGB2GRAY)
+		sharpened = cv2.filter2D(gray, -1, MRP.sharpen_kernel)
+
+		# TODO: Note that you can use as many or as few features as you like as long
+		# 		as there's a balance. I tried with 100 features and it started detecting
+		# 		smudges in the background. 20 features was too few, didn't cover enough 
+		# 		of the lens area
+		corners = cv2.goodFeaturesToTrack(sharpened, 50, 0.01, 10)
+		corners = np.int0(corners)
+
+		sharpened = cv2.cvtColor(sharpened, cv2.COLOR_GRAY2RGB)
+
+		for i in corners:
+			x,y = i.ravel()
+			MRP.edge_features.append([x,y])
+			# cv2.circle(sharpened,
+			# 			(x,y),
+			# 			3,
+			# 			(0,255,255),
+			# 			-1)
+			
+		# cv2.imwrite("marked_features.jpg", sharpened)
