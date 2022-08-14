@@ -20,6 +20,25 @@ class VideoPrep:
 		self.min_euclidean_distance = 5
 		self.threshold = 0.05
 
+	def prepGray(self, mrp, frame):
+		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		median = cv2.medianBlur(gray, 7)
+		sharpen = cv2.filter2D(median, -1, mrp.sharpen_kernel)
+	
+		return sharpen
+
+	def extractCircles(self, mrp, frame):
+		# Prep the frame
+		prepped = self.prepGray(mrp, frame)
+		canny = cv2.Canny(prepped, 50, 200)
+
+		# Check for and return an array of circles
+		circles = cv2.HoughCircles(canny, cv2.HOUGH_GRADIENT,
+							1, 100, param1 = 50, param2 = 30, 
+							minRadius = 5, maxRadius = 20)
+
+		return circles
+
 	#  TODO: File selection functions, things are going to be working differently once 
 	# 		the user can pick which video to process
 	
@@ -29,20 +48,49 @@ class VideoPrep:
 	# 	Find the frames with the MRP
 	# 	Split those frames off from the rest of the video
 	# 	THEN MARK THE FEATURES
+	
+	def findCircularBlobs(self, mrp, frame):
 
+		# Binarize the frame
+		gray = self.prepGray(mrp, frame)
+		retval, binarized = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+
+		cv2.imwrite("binarized.jpg", binarized)
+
+		# Blank image for testing
+		img = np.zeros([1,1])
+		parameters = cv2.SimpleBlobDetector_Params()
+
+		# Set minimum area so it doesn't detect dots
+		parameters.filterByArea = True
+		parameters.minArea = 30
+
+		# Set circularity so blobs are more circular
+		parameters.filterByCircularity = True
+		parameters.minCircularity = 0.5
+
+		# Set convexity so blobs are closer to a close circle
+		parameters.filterByConvexity = True
+		parameters.minConvexity = 0.5
+
+		# Set inertia filtering parameters so ellipses can be detected
+		parameters.filterByInertia = True
+		parameters.minInertiaRatio = 0.05
+		parameters.maxInertiaRatio = 1
+
+		blob_detector = cv2.SimpleBlobDetector_create(parameters)
+
+		blobs = blob_detector.detect(binarized)
+
+		# print("blobs:\n", blobs)
+
+		return blobs
+
+	# TODO: Put blob detection in a different function
 	def findMRPInFrame(self, mrp, frame):
 
-		# Prep the frame
-		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-		sharpen = cv2.filter2D(gray, -1, mrp.sharpen_kernel)
-		canny = cv2.Canny(sharpen, 50, 200)
-
-		# See if there are any lens
-		# TODO: Make this rotation invariant
-		# TODO: this has to take the size of the lens into account
-		found_lens = cv2.HoughCircles(canny, cv2.HOUGH_GRADIENT,
-							1, 100, param1 = 50, param2 = 30, 
-							minRadius = 5, maxRadius = 20)
+		found_lens = self.extractCircles(mrp, frame)
+		possible_lens = self.findCircularBlobs(mrp, frame)
 		if found_lens is not None:
 			found_lens = np.round(found_lens[0, :]).astype("int")
 		else:
@@ -54,21 +102,30 @@ class VideoPrep:
 		# Check the distances if the any circles aka possible lenses
 		# were detected in the frame, else return false
 		# TODO: Set a threshold for distance comparison
+
+		# How to know if an MRP is present in the image?
+		# We're basing it off of the lens. If the distance between two circles
+		# (lens) is within 5 ticks of any distance in MRP.distances
+		# then an MRP is present.
+
+		# Yes this is still very vague, but let's figure this out first before
+		# diving into details.
+
 		mrp_distances = mrp.getDistances()
+		matches = []
 		length = len(found_lens)
 		i = 0
-		print(found_lens)
-		print("found_lens length: ", length, " landed!")
+		# print(found_lens)
+		# print("found_lens length: ", length, " landed!")
 		if (length != 0) & (length > 1):
 			for (x,y,r) in found_lens:
-				cv2.circle(gray,
+				cv2.circle(frame,
 					   (x,y),
 					   r,
 					   (0,255,0),
 					   -1)
 			while (i < length):
 				if (i < (length - 1)):
-					# TODO: paper code this first, it's getting unwieldy
 					print("now we here")
 					lens1 = found_lens[i]
 					lens2 = found_lens[i+1]
@@ -77,17 +134,31 @@ class VideoPrep:
 					q = [lens2[0], lens2[1]]
 	
 					dist = math.dist(p,q)
-	
-					# TODO: efficiently find the closest match to a distance in the MRP object
-					cv2.imwrite("curr_frame.jpg", gray)
-				i += 1
-			mrp_present = True	
 
+					print("mrp_distances: ", mrp_distances)
+					# TODO: Make the threshold more dynamic
+					# Search for the closest match to the value in mrp_distances
+					for given in mrp_distances:
+						upper = int(given + 5)
+						lower = int(given - 5)
+						if dist in range(lower, upper):
+							print("pwede na!")
+							matches.append(dist)
+					cv2.imwrite("frame%d.jpg" % i, frame)
+				i += 1
 		else:
 			mrp_present = False
 
-		return mrp_present
+		if len(matches) != 0:
+			print("an MRP??")
+			mrp_present = True
+			return mrp_present
+		else: 
+			print("no MRP??")
+			mrp_present = False
+			return mrp_present
 
+		return mrp_present
 
 	def isolateMRPFrames(self, mrp):
 
@@ -116,7 +187,7 @@ class VideoPrep:
 						# break
 					i += 1
 
-					print(i)
+					# print(i)
 					
 			# 		cv2.imshow("mrp_locator", curr_frame)
 					

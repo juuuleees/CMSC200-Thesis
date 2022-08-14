@@ -27,6 +27,8 @@ class MRP:
 		return MRP.edge_features
 	def getSharpenKernel(self):
 		return MRP.sharpen_kernel
+	def getFinalTemplate(self):
+		return MRP.final_template
 
 
 	# setters
@@ -40,6 +42,11 @@ class MRP:
 		MRP.edge_features = new_edges
 	def setSharpenKernel(self, sharpen):
 		MRP.sharpen_kernel = sharpen
+
+	def showMRPDetails(self):
+		print("lens areas: ", self.lens_areas)
+		print("distances: ", self.distances)
+		print("edge features: ", MRP.edge_features)
 
 
 	# MRP functions
@@ -66,7 +73,7 @@ class MRP:
 		cropped_MRP = self.src_img[y1:y2, x2:x1]
 
 		MRP.final_template = cropped_MRP
-		cv2.imwrite("final_template.jpg", cropped_MRP)
+		# cv2.imwrite("final_template.jpg", cropped_MRP)
 
 	# Source of interest: https://github.com/Jiankai-Sun/Android-Camera2-API-Example/blob/master/app/src/main/java/com/jack/mainactivity/MainActivity.java
 	def findMRPArea(self):
@@ -77,7 +84,6 @@ class MRP:
 		mrp_sharp = cv2.filter2D(mrp_gray, -1, MRP.sharpen_kernel)
 
 		# Implement Canny edge detection
-		# TODO: See if Gaussian blur is required before implementing Canny edge
 		mrp_canny = cv2.Canny(mrp_sharp, 50, 200)
 
 		# Hough circle detection to pick out the camera lens 
@@ -113,27 +119,27 @@ class MRP:
 
 		# Commenting this out but not deleting in case I need it again in the future
 		# Mark the circles
-		mrp_canny = cv2.cvtColor(mrp_canny, cv2.COLOR_GRAY2RGB)
-		for (x,y,r) in camera_lens:
-			cv2.circle(mrp_canny,
-					   (x,y),
-					   r,
-					   (0,255,0),
-					   -1)
-			# print("center: ",x,y)
-			if (x == 900):
-				cv2.circle(mrp_canny,
-					   (x,y),
-					   5,
-					   (0,0,255),
-					   1)
-			else:
-				cv2.circle(mrp_canny,
-					   (x,y),
-					   5,
-					   (255,0,0),
-					   1)
-		cv2.imwrite("mrp.jpg", mrp_canny)
+		# mrp_canny = cv2.cvtColor(mrp_canny, cv2.COLOR_GRAY2RGB)
+		# for (x,y,r) in camera_lens:
+		# 	cv2.circle(mrp_canny,
+		# 			   (x,y),
+		# 			   r,
+		# 			   (0,255,0),
+		# 			   -1)
+		# 	# print("center: ",x,y)
+		# 	if (x == 900):
+		# 		cv2.circle(mrp_canny,
+		# 			   (x,y),
+		# 			   5,
+		# 			   (0,0,255),
+		# 			   1)
+		# 	else:
+		# 		cv2.circle(mrp_canny,
+		# 			   (x,y),
+		# 			   5,
+		# 			   (255,0,0),
+		# 			   1)
+		# cv2.imwrite("mrp.jpg", mrp_canny)
 
 # Everything from here on concerns the final MRP template
 # TODO: Note in the methodology that the mirror has an effect on the MRP image. 

@@ -4,42 +4,46 @@ import numpy as np
 
 from moviepy.editor import *
 
-fov_reader = cv2.VideoCapture("output_videos/bw_video.mp4")
+src = cv2.imread("final_template.jpg")
 
-width = fov_reader.get(cv2.CAP_PROP_FRAME_WIDTH)
-height = fov_reader.get(cv2.CAP_PROP_FRAME_HEIGHT)
+sharpen_kernel = np.array([[0, -1, 0],
+							  [-1, 5, -1],
+							  [0, -1, 0]])
 
-feature_write = cv2.VideoWriter(
-				"output_videos/features.avi",
-				cv2.VideoWriter_fourcc(*"mp4v"),
-				30,
-				(int(width), int(height)))
 
-i = 1
-while fov_reader.isOpened():
-	ret, curr_frame = fov_reader.read()
-	
-	if ret == True:
+gray = cv2.cvtColor(src, cv2.COLOR_RGB2GRAY)
+median = cv2.medianBlur(gray, 3)
+# sharpen = cv2.filter2D(median, -1, sharpen_kernel)
 
-		features = cv2.goodFeaturesToTrack(
-					curr_frame,
-					100,
-					0.2,
-					10)
-		features = np.int0(features)
+# Binarize 
+retval, binarized = cv2.threshold(median, 80, 255, cv2.THRESH_BINARY)
 
-		j = 1
-		for feature in features:
-			x,y = feature.ravel()
-			cv2.circle(
-					curr_frame,
-					(x,y),
-					3,
-					255,
-					-1)
-			j += 1
-		feature_write.write(curr_frame)
-	else: break
+# Blank image for testing
+img = np.zeros([1,1])
+parameters = cv2.SimpleBlobDetector_Params()
 
-feature_write.release()
-fov_reader.release()
+# Set minimum area so it doesn't detect dots
+parameters.filterByArea = True
+parameters.minArea = 100
+
+# Set circularity so blobs are more circular
+parameters.filterByCircularity = True
+parameters.minCircularity = 0.5
+
+# Set convexity so blobs are closer to a close circle
+parameters.filterByConvexity = True
+parameters.minConvexity = 0.5
+
+# Set inertia filtering parameters so ellipses can be detected
+parameters.filterByInertia = True
+parameters.minInertiaRatio = 0.05
+parameters.maxInertiaRatio = 1
+
+blob_detector = cv2.SimpleBlobDetector_create(parameters)
+blobs = blob_detector.detect(binarized)
+
+drawn_blobs = cv2.drawKeypoints(src, blobs, src, (255,255,0),
+								cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+print(blobs)
+
+cv2.imwrite("mrp_final_blobs.jpg", drawn_blobs)
