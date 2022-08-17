@@ -17,15 +17,15 @@ from MRP import MRP
 videos = []
 
 # Read input video as VideoFileClip 
-invid1 = VideoFileClip("sample_videos/egomotion-smp1.mp4")
+invid1 = VideoFileClip("sample_videos/sample_forward.mp4")
 videos.append(invid1)
-invid2 = VideoFileClip("sample_videos/smp2.mp4")
+invid2 = VideoFileClip("sample_videos/sample_left.mp4")
 videos.append(invid2)
-invid3 = VideoFileClip("sample_videos/smp3.mp4")
+invid3 = VideoFileClip("sample_videos/sample_left_noMRP.mp4")
 videos.append(invid3)
-invid4 = VideoFileClip("sample_videos/smp4.mp4")
+invid4 = VideoFileClip("sample_videos/sample_right.mp4")
 videos.append(invid4)
-invid5 = VideoFileClip("sample_videos/smp5.mp4")
+invid5 = VideoFileClip("sample_videos/sample_right_noMRP.mp4")
 videos.append(invid5)
 	
 mrp_src = cv2.imread("MRP.jpg")
@@ -35,16 +35,17 @@ main_ref_pt.saveFeatures()
 
 main_ref_pt.showMRPDetails()
 
-print("\n", videos[0].filename)
-video_prep = VideoPrep(videos[2])
+print("\n", videos[1].filename)
+video_prep = VideoPrep(videos[1])
 
-video_prep.isolateMRPFrames(main_ref_pt)
+video_prep.videoProcessor(main_ref_pt)
 
+# video_prep.isolateMRPFrames(main_ref_pt)
 # for video in videos:
 # 	print("\n", video.filename)
 # 	video_prep = VideoPrep(video)
 
-# 	video_prep.isolateMRPFrames(main_ref_pt)
+	# video_prep.isolateMRPFrames(main_ref_pt)
 # 	break
 # video_prep.markFeatures()
 # video_prep.addFoV()

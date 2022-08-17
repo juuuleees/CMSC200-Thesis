@@ -8,10 +8,11 @@ class MRP:
 	def __init__(self, mrp_image):
 		self.src_img = mrp_image
 		# NOTE: lens_areas has the AREAS, NOT the COORDINATES. DO NOT OVERTHINK THIS.
-		self.lens_areas = []
+		MRP.lens_areas = []
 		# 'distances' is distances between the centers of the lens
-		self.distances = []
+		MRP.distances = []
 		MRP.edge_features = []
+		MRP.lens_radii = []
 		MRP.sharpen_kernel = np.array([[0, -1, 0],
 								  [-1, 5, -1],
 								  [0, -1, 0]])
@@ -20,13 +21,15 @@ class MRP:
 	def getSrcImage(self):
 		return self.src_img
 	def getLensAreas(self):
-		return self.lens_areas
+		return MRP.lens_areas
 	def getDistances(self):
-		return self.distances
+		return MRP.distances
 	def getEdgeFeatures(self):
 		return MRP.edge_features
 	def getSharpenKernel(self):
 		return MRP.sharpen_kernel
+	def getLensRadii(self):
+		return MRP.lens_radii
 	def getFinalTemplate(self):
 		return MRP.final_template
 
@@ -35,17 +38,19 @@ class MRP:
 	def setSrcImage(self, new_src):
 		self.src_img = new_src
 	def setLensAreas(self, new_lens):
-		self.lens_araes = new_lens
+		MRP.lens_areas = new_lens
 	def setDistances(self, new_dists):
-		self.distances = new_dists
+		MRP.distances = new_dists
+	def setLensRadii(self, new_radii):
+		MRP.lens_radii = new_radii
 	def setEdgeFeatures(self, new_edges):
 		MRP.edge_features = new_edges
 	def setSharpenKernel(self, sharpen):
 		MRP.sharpen_kernel = sharpen
 
 	def showMRPDetails(self):
-		print("lens areas: ", self.lens_areas)
-		print("distances: ", self.distances)
+		print("lens areas: ", MRP.lens_areas)
+		print("distances: ", MRP.distances)
 		print("edge features: ", MRP.edge_features)
 
 
@@ -57,20 +62,32 @@ class MRP:
 		# Okay this is a bit hardcoded, don't forget to note this
 		# in the final paper, or at the very least ask Sir Jimmy how to note it
 
+		# TODO: No more cropping, but draw a rect around the area of the MRP
+
 		# Find the upper corner of the rectangle
 		lens1 = lens_centers[0] 
-		x1 = lens1[0] + 85 
-		y1 = lens1[1] - 50
+		x1 = lens1[0] + 85 			# 1141
+		y1 = lens1[1] - 50			# 710
 
 		# Find the lower corner of the rectangle
 		# Lower corner has to be 'lower' down, to make the lower half
 		# of the MRP big enough to include the flash
 		lens2 = lens_centers[1]
-		x2 = lens2[0] - 70
-		y2 = lens2[1] + 130
+		x2 = lens2[0] - 70			# 830
+		y2 = lens2[1] + 130			# 890
 
 		# Crop out the rectangle and save it as the MRP
 		cropped_MRP = self.src_img[y1:y2, x2:x1]
+		
+		length = x1 - x2
+		width = y2 - y1
+	
+		start = (x1, y1)
+		end = (x2, y2)
+		color = (0,255,0)
+		thickness = 5
+
+		final_MRP = cv2.rectangle(self.src_img, start, end, color, thickness)
 
 		MRP.final_template = cropped_MRP
 		# cv2.imwrite("final_template.jpg", cropped_MRP)
@@ -98,7 +115,8 @@ class MRP:
 		for (x,y,r) in camera_lens:
 			centers.append([x,y])
 			lens = self.findLensArea(r)
-			self.lens_areas.append(lens)
+			MRP.lens_areas.append(lens)
+			MRP.lens_radii.append(r)
 
 		# Note the distance between the centers of the lens
 		length = len(camera_lens) - 1
@@ -112,7 +130,7 @@ class MRP:
 			q = [lens2[0], lens2[1]]
 
 			dist = math.dist(p,q)
-			self.distances.append(dist)
+			MRP.distances.append(dist)
 			i += 1
 
 		self.findCameraArea(centers)
@@ -121,6 +139,7 @@ class MRP:
 		# Mark the circles
 		# mrp_canny = cv2.cvtColor(mrp_canny, cv2.COLOR_GRAY2RGB)
 		# for (x,y,r) in camera_lens:
+		# 	print("here")
 		# 	cv2.circle(mrp_canny,
 		# 			   (x,y),
 		# 			   r,
@@ -168,5 +187,6 @@ class MRP:
 			# 			3,
 			# 			(0,255,255),
 			# 			-1)
+
 			
-		# cv2.imwrite("marked_features.jpg", sharpened)
+		cv2.imwrite("marked_features.jpg", sharpened)
