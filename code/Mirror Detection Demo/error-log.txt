@@ -58,3 +58,13 @@
 	  to implement and run.
 	TODO: Split the video into groups of frames and perform operations on each group. Easier to isolate
 		  points of interest and perform ooperations, divide and conquer
+18-8-2022
+	- reshot sample videos and improved video quality for Canny edge detection. Hopefully this helps
+	  with locating the MRP, previous approach couldn't locate the lens even though they were clearly
+	  visible in the frame
+19-8-2022
+	- adjusting contours to meet specifications. MRP successfully detected in only one out of five videos.
+	  If MRP isn't visible/detected using Hough circles, use contour shapes to find the mirror. Remember,
+	  a mirror will reflect whatever's in front of it but flipped about the Y-axis.
+20-8-2022
+	- 

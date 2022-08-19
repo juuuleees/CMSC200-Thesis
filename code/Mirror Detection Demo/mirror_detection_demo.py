@@ -33,20 +33,24 @@ main_ref_pt = MRP(mrp_src)
 main_ref_pt.findMRPArea()
 main_ref_pt.saveFeatures()
 
-main_ref_pt.showMRPDetails()
+# main_ref_pt.showMRPDetails()
 
-print("\n", videos[1].filename)
-video_prep = VideoPrep(videos[1])
+# print("\n", videos[1].filename)
+# video_prep = VideoPrep(videos[1])
 
-video_prep.videoProcessor(main_ref_pt)
+# video_prep.videoProcessor(main_ref_pt)
+# video_prep.locateMRP()
 
 # video_prep.isolateMRPFrames(main_ref_pt)
-# for video in videos:
-# 	print("\n", video.filename)
-# 	video_prep = VideoPrep(video)
+i = 0
+for video in videos:
+	print("\n", video.filename)
+	video_prep = VideoPrep(video)
+	video_prep.videoProcessor(main_ref_pt)
 
-	# video_prep.isolateMRPFrames(main_ref_pt)
-# 	break
+	video_prep.locateMRP(i)
+	i += 1
+	# break
 # video_prep.markFeatures()
 # video_prep.addFoV()
 
