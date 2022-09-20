@@ -51,4 +51,5 @@ public class LiveFeed extends AppCompatActivity implements CameraBridgeViewBase.
         mat3 = new Mat(width, height, CvType.CV_8UC4);
     }
 
+
 }

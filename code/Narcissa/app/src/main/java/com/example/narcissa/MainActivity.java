@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 //            startActivity(intent);
             Log.i("Camera", "Camera active.");
+            // hoy git ano ba
         }
     }
 
