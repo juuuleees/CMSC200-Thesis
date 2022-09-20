@@ -18,7 +18,7 @@ class VideoPrep:
 		self.min_euclidean_distance = 5
 		self.threshold = 0.05
 
-		VideoPrep.changed_frames = []
+		# VideoPrep.changed_frames = []
 
 	def treatFrame(self, mrp, frame):
 
@@ -29,32 +29,45 @@ class VideoPrep:
 		unsharped = gray + mask
 
 		# Use Canny edge detection
-		canny = cv2.Canny(unsharped, 40, 200)
+		canny = cv2.Canny(unsharped, 80, 200)
 
 		return canny
 
 	def filterContours(self, contour_arr):
 
 		final_contours = []
+		triangles = []
+		rects = []			
+		polygons = []					# any shape with 5-9 points
+		misc = []						# any shape with more than 9 points
 
 		for contour in contour_arr:
 			area = cv2.contourArea(contour)
 			if area > 50:
 				perimeter = cv2.arcLength(contour, True)
-				shape = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
-				if len(shape) < 100:
-					final_contours.append(contour)
+				shape = cv2.approxPolyDP(contour, 0.05 * perimeter, True)
+				if len(shape) == 3:
+					triangles.append(contour)
+				elif len(shape) == 4:
+					rects.append(contour)
+				elif len(shape) > 5 and len(shape) < 9:
+					polygons.append(contour)
+				elif len(shape) < 100:
+					misc.append(contour)
 
-		# print(final_contours)
+		final_contours.append(triangles)
+		final_contours.append(rects)
+		final_contours.append(polygons)
+		final_contours.append(misc)
+
 		return final_contours
-
 
 	def videoProcessor(self, mrp):
 
-		# out_vid = cv2.VideoWriter("output_videos/prepped.mp4", cv2.VideoWriter_fourcc(*"MPEG"), 15, (1280,720))
 		frame_array = []
 		info_frame_array = []
 
+		counter = 0
 		for frame in self.input_video.iter_frames():
 			processed = self.treatFrame(mrp, frame)
 			# processed = cv2.cvtColor(processed, cv2.COLOR_GRAY2BGR)
@@ -64,17 +77,36 @@ class VideoPrep:
 			contours = self.filterContours(contours)
 
 			proc_copy = cv2.cvtColor(proc_copy, cv2.COLOR_GRAY2BGR)
-			contoured = cv2.drawContours(proc_copy, contours, -1, (0,0,255), 3)
-			# cv2.imwrite("contoured.jpg", contoured)
+
+			i = 0
+			while i < len(contours):
+				# print(len(contours[i]))
+				if i == 0:
+					# print("\ntriangles!!")
+					color = (255,0,0)
+					contoured = cv2.drawContours(proc_copy, contours[i], -1, color, 3)				
+				elif i == 1:
+					# print("\nrects!!")
+					color = (0,0,150)
+					contoured = cv2.drawContours(proc_copy, contours[i], -1, color, 3)				
+				elif i == 2:
+					# print("\npolygons!!")
+					color = (100,0,80)
+					contoured = cv2.drawContours(proc_copy, contours[i], -1, color, 3)				
+				elif i == 3:
+					# print("\nmisc!!")
+					color = (255,100,0)
+					contoured = cv2.drawContours(proc_copy, contours[i], -1, color, 3)				
+				i += 1
+					
 			info_frame = [contoured, contours]
 			
 			frame_array.append(processed)
 			info_frame_array.append(info_frame)
+			counter += 1
+			# break
 
-		# for i in range(len(frame_array)):
-		# 	out_vid.write(frame_array[i])
-
-		# out_vid.release()
+		print("total frames: ", counter)
 
 		self.prepped_vid_array = frame_array
 		self.info_frames = info_frame_array
@@ -90,17 +122,35 @@ class VideoPrep:
 
 	def locateMRP(self, count):
 
-		# Save MRP frames somewhere
+		# Save MRP frames
 		frames = []
+		biggest_components = []
 
 		for i in range(len(self.prepped_vid_array)):
-			# print("circle detect pls")
+
+			# Separate into components because this makes it a bit easier to locate
+			# the MRP/contours when the background's a mess
+			component_analysis = cv2.connectedComponentsWithStats(self.prepped_vid_array[i],
+																  4,
+																  cv2.CV_32S)
+			(all_labels, ids, stats, centroids) = component_analysis
+
+			big_area = []
+			while i < all_labels:
+				area = stats[i, cv2.CC_STAT_AREA]
+	
+				if (area > 1000) and (area < 5000):
+					print("ids[i]: ", ids[i][1])
+					big_area.append(ids[i])
+					big_area.append(stats[i])
+					biggest_components.append(big_area)
+				break
+	
+				i += 1
+
 			circles = self.extractCircles(self.prepped_vid_array[i])
 			if circles is not None:
-				# print(circles)
-				# circles = circles[0]
 				circles = np.round(circles[0, :]).astype("int")
-				# circle_frame = cv2.cvtColor(self.prepped_vid_array[i], cv2.COLOR_GRAY2BGR)
 				circle_frame = self.info_frames[i][0]
 				for (x,y,r) in circles:
 					cv2.circle(circle_frame,
@@ -112,20 +162,17 @@ class VideoPrep:
 			else:
 				frames.append(self.prepped_vid_array[i])
 
-		print(len(frames))
+		print("final frames: ", len(frames))
 
 		if len(frames) != 0:
 			out_vid = cv2.VideoWriter("output_videos/%d_mrps.mp4" % count,
-										 cv2.VideoWriter_fourcc(*"MPEG"), 10, (1280,720))
+										 cv2.VideoWriter_fourcc(*"mp4v"), 10, (1280,720))
 			
 			for i in range(len(frames)):
-				# mrp_frame = cv2.cvtColor(mrp_frames[i], cv2.COLOR_GRAY2BGR)
 				out_vid.write(frames[i])
-				# cv2.imwrite("output_videos/%d-%d_info.jpg" % (count,i), frames[i])
+				if not os.path.exists('output_videos/%d_frames' % count):
+					print("??? makedir??")
+					os.makedirs('output_videos/%d_frames' % count)
+				cv2.imwrite("output_videos/%d_frames/%d_info.jpg" % (count,i), frames[i])
 
-			# for j in range(len(self.info_frames)):
-			# 	# contour_frame = cv2.cvtColor(self.info_frames[j][0], cv2.COLOR_GRAY2BGR)
-			# 	contour_vid.write(self.info_frames[j][0])
-	
-			# contour_vid.release()
 			out_vid.release()

@@ -3,5 +3,7 @@
     <string name="action_settings">Settings</string>
     <!--    Button label strings -->
     <string name="bot_connect">Connect to bot</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

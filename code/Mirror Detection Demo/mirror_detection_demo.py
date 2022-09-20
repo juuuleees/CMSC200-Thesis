@@ -50,7 +50,7 @@ for video in videos:
 
 	video_prep.locateMRP(i)
 	i += 1
-	# break
+	break
 # video_prep.markFeatures()
 # video_prep.addFoV()
 
