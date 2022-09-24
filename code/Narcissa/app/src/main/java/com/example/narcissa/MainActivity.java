@@ -5,10 +5,16 @@ package com.example.narcissa;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 
@@ -28,10 +34,19 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    static Context context;
+    private static final int REQUEST_CAMERA_OPEN = 100;
+//    private static Context context;
     private Button connect_arduino;
     private LiveFeed vision;
     private boolean driver_present = false;
+
+    private TextureView textureView;
+    private String cameraID;
+    private CameraDevice cam_hardware;
+    private CameraCaptureSession session;
+    private CaptureRequest request;
+    private CaptureRequest.Builder req_builder;
+    private Size dimensions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +77,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            cameraBridgeView.enableView();
 
 //            TODO: Access the camera via button click like in Torchic
-//            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-//            startActivity(intent);
-            Log.i("Camera", "Camera active.");
+            open_camera_sensor();
+            Log.i("CameraSensor", "Camera active.");
             // hoy git ano ba
+        } else {
+            Log.i("CameraSensor", "Camera not found.");
         }
     }
 
@@ -81,6 +97,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i("ArduinoConnect", "Driver: " + available_drivers.get(i));
             }
         }
+    }
+
+    public void open_camera_sensor() {
+//        Intent camera_sensor_intent = new Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA);
+//        if (camera_sensor_intent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(camera_sensor_intent, REQUEST_CAMERA_OPEN);
+//        }
     }
 
 }
