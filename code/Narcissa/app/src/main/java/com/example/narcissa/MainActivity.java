@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .findAllDrivers(manager);
         if (available_drivers.isEmpty()) {
             Log.i("ArduinoConnect","No available drivers.");
+//            next line only for testing camera
+            this.driver_present = true;
         } else {
             this.driver_present = true;
             for (int i = 0; i < available_drivers.size(); i++) {
@@ -104,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        if (camera_sensor_intent.resolveActivity(getPackageManager()) != null) {
 //            startActivityForResult(camera_sensor_intent, REQUEST_CAMERA_OPEN);
 //        }
+        Log.i("TODO", "Link to LiveFeed here");
+        Intent livefeed_intent = new Intent(this, LiveFeed.class);
+        startActivity(livefeed_intent);
     }
 
 }

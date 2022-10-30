@@ -29,3 +29,10 @@ Connected Android to Arduino Uno (Iduino Uno) via USB
 Removing VideoDemonstrations and connected classes. Those will be moved to a Python
 program instead. Also fixed phone orientation to landscape. It's harder to balance a
 phone using portrait view.
+
+9/25/2022
+Camera successfully accessed using Camera2 hardware.
+
+10/30/2022
+Finally got the preview set to 1280x720 and I understand how I got there. My relief
+is endless, my delight immeasurable.
