@@ -1,0 +1,70 @@
+15/7/2022
+- code won't convert video to grayscale, possibly issues with filepath
+- error: (-215:Assertion failed) frameSize.width > 0 && frameSize.height > 0 in function 'open'
+	= means that for some reason it doesn't read a frame/image, yet it
+		produces the necessary output
+
+16/7/2022
+- resolved grayscale conversion issue with VideoFileclip from moviepy, code refactored for
+	further moviepy usage
+	1805H
+		- MoviePy error: failed to read the duration of file output_videos/fov_video.mp4.
+			This has to be handled even though it produces the file we need. Not the 
+			greatest priority but it has to be solved before/during file selection implementation
+			Oddly it only occurs when assigning a new VideoFileClip to self.fov_video.
+			
+			Solution: remove that variable. It writes the video we need, anyway. But put a pin
+			in this error, I get the feeling it'll come back.
+	1828H:
+		- fov_video.mp4 isn't being written properly somehow. It's playable and everything but
+			you can't get its duration which is messing with the rest of the code. 
+17/7/2022
+0023H:
+	- video is now being written correctly. Relief.
+2048H:
+	- markFeatures() causes a segfault and doesn't write to video properly. However locating features
+		works fine and results are visible using cv2.imshow()
+
+24/7/2022
+0148H:
+	- used different method for markFeatures(), everything is now working swimmingly
+
+25/7/2022
+0122H:
+	- sharpened and tweaked Shi-Tomasi threshold to get more features out of the MRP source
+	  image
+	- located the camera lens and flashlight in the MRP source image with just Shi-Tomasi
+	  but not in the sample video. It's probably due to lighting, but I should find a way
+	  to handle it
+
+3-8-2022
+	- located two proper circles. It'll be enough for now as the bare minimum but I will continue 
+	  to try and get the final third circle.
+	- the process for locating camera lens, predictably, works better the clearer the photo is. A different
+	  sample photo taken in front of the older mirror in mom's room with different lighting doesn't register
+	  the same way as the original MRP reference photo. This should be noted as a limitation or at the very
+	  least an obstacle
+
+5-8-2022
+	- finally isolated the MRP. Had to hardcode it though, and it'll probably have to be hardcoded to match
+	  the Android being used. Reminding myself again to mark this in the methodology.
+10-8-2022
+	- proper use of break and return is making compilation faster, currently working on
+	  what I can only call loosely "feature matching". Choosing things then throwing them at the wall
+	  to see what sticks
+14-8-2022
+	- can use blob detection to match points opposite a mirror even without an MRP, just have to figure out
+	  how to do a mirror flip. It's also going to take a lot of memory I think, or at least a lot of time
+	  to implement and run.
+	TODO: Split the video into groups of frames and perform operations on each group. Easier to isolate
+		  points of interest and perform ooperations, divide and conquer
+18-8-2022
+	- reshot sample videos and improved video quality for Canny edge detection. Hopefully this helps
+	  with locating the MRP, previous approach couldn't locate the lens even though they were clearly
+	  visible in the frame
+19-8-2022
+	- adjusting contours to meet specifications. MRP successfully detected in only one out of five videos.
+	  If MRP isn't visible/detected using Hough circles, use contour shapes to find the mirror. Remember,
+	  a mirror will reflect whatever's in front of it but flipped about the Y-axis.
+20-8-2022
+	- 
