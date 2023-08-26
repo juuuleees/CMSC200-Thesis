@@ -1,0 +1,27 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml:2:1-5:12
+INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml:2:1-5:12
+INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml:2:1-5:12
+	package
+		INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+		ADDED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml:2:1-5:12
+		INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml:2:11-69
+	xmlns:opencv
+		ADDED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml:3:5-30
+uses-sdk
+INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+		ADDED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+		INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+		ADDED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+		INJECTED from /home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml

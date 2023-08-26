@@ -1,0 +1,72 @@
+6/18/2022
+Added:
+= landscape and portrait fragments
+In progress:
+= video demonstrations
+
+7/1/2022
+Have to redo the files, OpenCV wouldn't initialize and I didn't catch it early enough.
+Luckily there's not that much to rebuild.
+1952H: Brought code back to original state.
+
+7/4/2022
+Setback, VideoWriter doesn't work (supposedly) on Android just yet, will link the
+StackOverflow thread about it later. Will have to read bytes into buffer into image
+and repeat per frame.
+
+Errors: VideoDemonstrations.java, can't open VideoWriter
+
+7/5/2022
+USB connection between Android and Arduino functional.
+
+Errors: UI can't switch from BotConnect and VideoDemonstrations, changes after
+        choosing one or the other
+
+7/5/2022
+Connected Android to Arduino Uno (Iduino Uno) via USB
+
+7/19/2022
+Removing VideoDemonstrations and connected classes. Those will be moved to a Python
+program instead. Also fixed phone orientation to landscape. It's harder to balance a
+phone using portrait view.
+
+9/25/2022
+Camera successfully accessed using Camera2 hardware.
+
+10/30/2022
+Finally got the preview set to 1280x720 and I understand how I got there. My relief
+is endless, my delight immeasurable.
+
+7/6/2023
+Made version 2.0 due to changes in Gradle that kept OpenCV from making a BuildConfig.java and
+R files that were needed. Got around this by disabling kotlin-android and making my own BuildConfig
+file. Hopefully this isn't game-breaking later on.
+
+8/9/2023
+It works. It finally installed properly. My heart is full.
+
+Relevant code:
+
+=====build.gradle (:opencv)=====
+// for generating a BuildConfig and reading interfaces in aidl files
+buildFeatures {
+        aidl true
+        buildConfig true
+}
+
+//res.srcDirs has to be rerouted to opencv's res folder
+sourceSets {
+    main {
+        jniLibs.srcDirs = ['native/libs']
+        java.srcDirs = ['java/src']
+        aidl.srcDirs = ['java/src/org/opencv/engine']
+        res.srcDirs = ['res']
+        manifest.srcFile 'java/AndroidManifest.xml'
+    }
+}
+
+=====AndroidManifest.xml (:opencv)=====
+
+// new way of adding the package name in xml files. "package=<name>"
+// has been deprecated
+xmlns:opencv="org.opencv"

@@ -1,0 +1,7 @@
+5-4-2023
+========
+
+1858H: fumbling with a better implementation for a continuous servo motor neck gave me a 
+	   very "if it's stupid and works then it's not stupid" solution. All it needs now is connection to Android and recalbrated timing
+2039H: not 100% sure if having Sisa be bluetooth reprogrammable but so far it's not
+	   working. Connection established but nothing's getting sent or received and I'm not sure why.
