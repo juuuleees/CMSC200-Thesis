@@ -272,6 +272,7 @@ public class LiveFeed extends AppCompatActivity {
             Log.i("MediaRecorderSetup", this.get_surface_width() + "," + this.get_surface_height());
 //          Error here regarding video size. check for available sizes because some devices can't support certain sizes.
 //          Some frame rates might not be supported either.
+//          TODO: check supported video sizes and frame rates
 
 //            video_recorder.setVideoSize(this.get_surface_width(), this.get_surface_height());
 //            video_recorder.setVideoFrameRate(FPS);
