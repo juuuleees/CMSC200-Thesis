@@ -266,26 +266,18 @@ public class LiveFeed extends AppCompatActivity {
             File video_file = File.createTempFile("vid", ".mp4");
 
             this.video_recorder = new MediaRecorder(getApplicationContext());
-            Log.i("MediaRecorderSetup", "Got app context");
             video_recorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-            Log.i("MediaRecorderSetup", "Set video source");
-            Log.i("MediaRecorderSetup", this.get_surface_width() + "," + this.get_surface_height());
-//          Error here regarding video size. check for available sizes because some devices can't support certain sizes.
-//          Some frame rates might not be supported either.
-//          TODO: check supported video sizes and frame rates
-
-//            video_recorder.setVideoSize(this.get_surface_width(), this.get_surface_height());
-//            video_recorder.setVideoFrameRate(FPS);
 //            No problems with file-related functions, pero baka magka-issue later on.
             video_recorder.setOutputFile(video_file.getAbsolutePath());
             video_recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             video_recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+            video_recorder.setVideoSize(this.get_surface_width(), this.get_surface_height());
+            video_recorder.setVideoFrameRate(FPS);
             try {
                 video_recorder.prepare();
-                Log.i("MediarecorderSetup", "MediaRecorder set up");
+                Log.i("MediaRecorderSetup", "MediaRecorder set up");
             } catch (IOException ioe) {
-//                ioe.printStackTrace();
-//                Toast.makeText(this, ioe.getMessage(), Toast.LENGTH_SHORT).show();
+
                 Log.i("MediaRecorderSetup", ioe.getMessage().toString());
             }
 
