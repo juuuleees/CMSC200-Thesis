@@ -4,6 +4,6 @@
 4    package="org.opencv" >
 5
 6    <uses-sdk android:minSdkVersion="21" />
-6-->/home/jules/Documents/Narcissa20/opencv/java/AndroidManifest.xml
+6-->/home/jules/Documents/CMSC200-Thesis-backup/code/Narcissa20/opencv/java/AndroidManifest.xml
 7
 8</manifest>

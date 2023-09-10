@@ -70,3 +70,7 @@ sourceSets {
 // new way of adding the package name in xml files. "package=<name>"
 // has been deprecated
 xmlns:opencv="org.opencv"
+
+10/9/2023
+
+Added Apache statistics library. working on EKF SLAM basics.
